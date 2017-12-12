@@ -1,0 +1,10 @@
+$hey-look-at-me-im-a-sass-variable: #333;
+
+.header {
+  color: $hey-look-at-me-im-a-sass-variable;
+  font-family: sans-serif;
+}
+
+.placeholder {
+  font-style: italic;
+}
