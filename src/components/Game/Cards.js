@@ -33,7 +33,10 @@ class Card extends React.Component {
 
 	render() {  
 
-		return (<li type={this.props.type} status={this.state.status} onClick={this.handleClick} className={this.state.flipped ? styles.flipped : null}> 
+		return (<li type={this.props.type}
+			id={this.props.id} 
+			status={this.state.status} onClick={this.handleClick} 
+			className={this.state.flipped ? styles.flipped : null}> 
 			{this.props.children}
 		</li>)
 	}
@@ -85,7 +88,7 @@ class CardContainer extends React.Component {
 
 			return symbols.map((symbol, idx) => 
 
-				<Card key={'card-' + idx} type={symbol} clickEvent={this.gameStatus} id={symbol}>
+				<Card key={'card-' + idx} type={symbol} clickEvent={this.gameStatus} id={idx}>
 					<div>
 						<figure className={styles.front}></figure>
 						<figure className={styles.back}>{symbol}</figure>
