@@ -2,26 +2,38 @@ import React from 'react'
 import { levels } from './Levels'
 import styles from './Game.scss'
 
+
 class Card extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			flipped: false,
-			queue: []
+			flipped: false, // change based on props
+			status: 'none'
 		}
 
-		this.toggleClass = this.toggleClass.bind(this)
+		this.handleClick = this.handleClick.bind(this)
 	}
 
-	toggleClass() {
-		const currentState = this.state.flipped;
-		this.setState({ flipped: !currentState })
-	};
+	handleClick() {
+		if(this.state.status === 'none') {
+			this.setState({flipped: !this.state.flipped})
+
+			if(this.props.clickEvent(this.props.type) === 'matching') {
+				this.setState({status: 'matching'})
+			} else if(this.props.clickEvent(this.props.type) === 'matched') {
+				console.log('matched')
+				this.setState({status: 'matched'})
+			} else if(this.props.clickEvent(this.props.type) === 'failed') {
+				console.log('failed')
+
+			}
+		}
+	}
+
 
 	render() {  
 
-		return (<li className={this.state.flipped ? styles['flipped'] : null} 
-			onClick={this.toggleClass}> 
+		return (<li type={this.props.type} status={this.state.status} onClick={this.handleClick} className={this.state.flipped ? styles.flipped : null}> 
 			{this.props.children}
 		</li>)
 	}
@@ -34,12 +46,30 @@ class CardContainer extends React.Component {
 			level: 'hard',
 			queue: []
 		}
-		this.addToQueue = this.addToQueue.bind(this)
+		this.gameStatus = this.gameStatus.bind(this)
 	}
 
-	addToQueue(symbol) {
-		this.state.queue.push(symbol)
-		console.log(this.state.queue)
+	gameStatus(symbol) {
+		console.log('called')
+		if(this.state.queue.length === 0) { 
+			console.log(this.state.queue.length)
+			this.state.queue.push(symbol)
+			console.log('matching')
+			return 'matching'
+		} 
+
+		if (this.state.queue.length === 1) {
+			console.log(this.state.queue[0] === this.state.queue[1])
+			if(this.state.queue[0] === symbol) {
+				// add to matches
+				this.setState({queue: []})
+				return 'matched'
+			} else {
+				console.log(this.state.queue)
+				this.setState({queue: []})
+				return 'failed'
+			}
+		}
 	}
 
 	render() {  
@@ -55,7 +85,7 @@ class CardContainer extends React.Component {
 
 			return symbols.map((symbol, idx) => 
 
-				<Card key={idx} id={symbol}>
+				<Card key={'card-' + idx} type={symbol} clickEvent={this.gameStatus} id={symbol}>
 					<div>
 						<figure className={styles.front}></figure>
 						<figure className={styles.back}>{symbol}</figure>
