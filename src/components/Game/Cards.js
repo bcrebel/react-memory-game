@@ -1,6 +1,7 @@
 import React from 'react'
 import { levels } from './Levels'
 import styles from './Game.scss'
+import Timer from '../Timer/Timer'
 
 
 class Card extends React.Component {
@@ -51,7 +52,6 @@ class CardContainer extends React.Component {
 	}
 
 	clickEvent(id, type) {
-		console.log(this.state.matches.length)
 		let obj = {}
 		obj[id] = type
 		let _cards = this.state.cards
@@ -124,6 +124,10 @@ class CardContainer extends React.Component {
 		return (
 			<div style={{position: 'relative'}}>
 				<div style={this.state.gameStarted ? {display: 'none'} : {display: 'block'}} className={styles.start} onClick={this.formatBoard} />
+				<h1 className={styles.header}>NYT Games Code Test</h1>
+				<div className={styles.intro}>
+					<Timer />
+				</div>
 				<ul className={styles[this.state.level]}>
 					{this.state.cards.map((card, idx) => {
 						return <Card key={'card-' + idx} type={card.type} onClick={() => this.clickEvent(idx, card.type)} className={styles[card.position]}>
