@@ -6,37 +6,11 @@ import styles from './Game.scss'
 class Card extends React.Component {
 	constructor(props) {
 		super(props)
-		this.state = {
-			flipped: false, // change based on props
-			status: 'none'
-		}
-
-		this.handleClick = this.handleClick.bind(this)
 	}
-
-	handleClick() {
-		if(this.state.status === 'none') {
-			this.setState({flipped: !this.state.flipped})
-
-			if(this.props.clickEvent(this.props.type) === 'matching') {
-				this.setState({status: 'matching'})
-			} else if(this.props.clickEvent(this.props.type) === 'matched') {
-				console.log('matched')
-				this.setState({status: 'matched'})
-			} else if(this.props.clickEvent(this.props.type) === 'failed') {
-				console.log('failed')
-
-			}
-		}
-	}
-
 
 	render() {  
 
-		return (<li type={this.props.type}
-			id={this.props.id} 
-			status={this.state.status} onClick={this.handleClick} 
-			className={this.state.flipped ? styles.flipped : null}> 
+		return (<li type={this.props.type} id={this.props.id} onClick={this.props.onClick} className={this.props.className}>
 			{this.props.children}
 		</li>)
 	}
@@ -46,61 +20,125 @@ class CardContainer extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			level: 'hard',
+			gameStarted: false,
+			level: 'easy',
+			matchNumber: '',
+			cards: [],
+			matches: [],
 			queue: []
 		}
-		this.gameStatus = this.gameStatus.bind(this)
+
+		this.restartGame = this.restartGame.bind(this)
+		this.formatBoard = this.formatBoard.bind(this)
+		this.clickEvent = this.clickEvent.bind(this)
+		this.flipLater = this.flipLater.bind(this)
+		this.hasId = this.hasId.bind(this)
 	}
 
-	gameStatus(symbol) {
-		console.log('called')
-		if(this.state.queue.length === 0) { 
-			console.log(this.state.queue.length)
-			this.state.queue.push(symbol)
-			console.log('matching')
-			return 'matching'
-		} 
+	flipLater(ids) {
+		let _cards = this.state.cards
+		ids.forEach(id => _cards[id].position = null)
 
-		if (this.state.queue.length === 1) {
-			console.log(this.state.queue[0] === this.state.queue[1])
-			if(this.state.queue[0] === symbol) {
-				// add to matches
-				this.setState({queue: []})
-				return 'matched'
+		this.setState({
+			cards: _cards,
+			queue: []
+		})
+	}
+
+	restartGame() {
+		this.setState({gameStarted: false})
+		this.formatBoard()
+	}
+
+	clickEvent(id, type) {
+		console.log(this.state.matches.length)
+		let obj = {}
+		obj[id] = type
+		let _cards = this.state.cards
+		_cards[id].position = 'flipped'
+
+		this.setState({ 
+			queue: this.state.queue.concat(obj),
+			cards: _cards
+		})
+
+		if(this.state.queue.length === 1) {
+			if(Object.values(this.state.queue[0])[0] === type) {
+				// Empty queue and move items to matches 
+				this.setState({
+					matches: this.state.matches.concat(this.state.queue.concat(obj)),
+					queue: []
+				})
+
 			} else {
-				console.log(this.state.queue)
-				this.setState({queue: []})
-				return 'failed'
+				let cardsToFlip = this.state.queue.concat(obj)
+				cardsToFlip = cardsToFlip.map(card => Object.keys(card)[0])
+				
+				setTimeout(function() {
+					this.flipLater(cardsToFlip)
+				}.bind(this), 1000);
 			}
 		}
+
+		if(this.state.matches.length === this.state.cards.length - this.state.matchNumber) {
+			if(this.state.queue.length === 1) {
+ 				if(Object.values(this.state.queue[0])[0] === type) {
+					setTimeout(function() {
+						this.restartGame()
+					}.bind(this), 1500)
+				}
+			}
+		}
+	}
+
+	hasId(id, arr) {
+		let match = arr.filter(item => Object.keys(item)[0] == id)
+		return match.length > 0;
+	}
+
+	formatBoard() {
+		let symbols;
+		if(this.state.level === 'easy') {
+			symbols = levels[0].cards
+		}
+
+		if(this.state.level === 'hard') {
+			symbols = levels[1].cards
+		}
+
+		let cards = symbols.map((symbol) => { // this is prolly not gonna work
+			return {
+				type: symbol,
+				position: null
+			}
+		})
+
+		this.setState({
+			cards: cards,
+			matchNumber: (this.state.level === 'easy' || this.state.level === 'hard') ? 2 : 3,
+			gameStarted: true
+		})
 	}
 
 	render() {  
-		const formatCards = level => {
-			let symbols;
-			if(level === 'easy') {
-				this.state.level = 'easy'
-				symbols = levels[0].cards
-			} else if(level === 'hard') {
-				this.state.level = 'hard'
-				symbols = levels[1].cards
-			}
-
-			return symbols.map((symbol, idx) => 
-
-				<Card key={'card-' + idx} type={symbol} clickEvent={this.gameStatus} id={idx}>
-					<div>
-						<figure className={styles.front}></figure>
-						<figure className={styles.back}>{symbol}</figure>
-					</div>
-				</Card>
-			)
-		}
-
-		return <ul className={styles[this.state.level]}>
-			{formatCards(this.state.level)}
-		</ul>
+		return (
+			<div style={{position: 'relative'}}>
+				<div style={this.state.gameStarted ? {display: 'none'} : {display: 'block'}} className={styles.start} onClick={this.formatBoard} />
+				<ul className={styles[this.state.level]}>
+					{this.state.cards.map((card, idx) => {
+						return <Card key={'card-' + idx} type={card.type} onClick={() => this.clickEvent(idx, card.type)} className={styles[card.position]}>
+							<div>
+								<figure className={styles.front}></figure>
+								<figure className={styles.back}>{card.type}</figure>
+							</div>
+						</Card>
+					})}
+				</ul>
+			</div>
+		)
 	}
 }
+
+
 
 export default CardContainer

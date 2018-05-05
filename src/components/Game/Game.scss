@@ -13,6 +13,13 @@ $putty: #f2f2f2;
 	height: 25vh;
 }
 
+.start {
+	background-color: orange;
+	width: 100vw;
+	position: absolute;
+	height: 100vh;
+}
+
 .header {
 	background-color: rebeccapurple;
 }
@@ -58,8 +65,12 @@ ul {
 		position: relative;
 		perspective: 800px;
 
-		&.flipped div {
-			transform: rotateY( 180deg );
+		&.flipped {
+			pointer-events: none;
+			
+			div {
+				transform: rotateY( 180deg );
+			}
 		}
 	}
 	
