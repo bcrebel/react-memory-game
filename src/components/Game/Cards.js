@@ -4,6 +4,32 @@ import styles from './Game.scss'
 import Timer from '../Timer/Timer'
 
 
+class Start extends React.Component {
+	constructor(props) {
+		super(props)
+	}
+
+	render() {
+		const greeting = this.props.newPlayer ? 'Ready for Another Round?' : 'Welcome to Memory!'
+		const Time = (
+			<div>
+				<p>Lowest Time</p>
+				<p>{this.props.lowestTime}</p>
+			</div>
+		)
+
+		return (
+			<div>
+				<h1>{greeting}</h1>
+				{this.props.lowestTime && Time}
+				<p>Choose your level</p>
+				<button>Easy</button>
+				<button>Hard</button>
+			</div>
+		)
+	}
+}
+
 class Card extends React.Component {
 	constructor(props) {
 		super(props)
@@ -11,9 +37,11 @@ class Card extends React.Component {
 
 	render() {  
 
-		return (<li type={this.props.type} id={this.props.id} onClick={this.props.onClick} className={this.props.className}>
-			{this.props.children}
-		</li>)
+		return (
+			<li type={this.props.type} id={this.props.id} onClick={this.props.onClick} className={this.props.className}>
+				{this.props.children}
+			</li>
+		)
 	}
 }
 
@@ -123,7 +151,9 @@ class CardContainer extends React.Component {
 	render() {  
 		return (
 			<div style={{position: 'relative'}}>
-				<div style={this.state.gameStarted ? {display: 'none'} : {display: 'block'}} className={styles.start} onClick={this.formatBoard} />
+				<div style={this.state.gameStarted ? {display: 'none'} : {display: 'block'}} className={styles.start} onClick={this.formatBoard}>
+					<Start newPlayer={this.state.gameStarted} lowestTime='0:34'/>
+				</div>
 				<h1 className={styles.header}>NYT Games Code Test</h1>
 				<div className={styles.intro}>
 					<Timer />
