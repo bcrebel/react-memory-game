@@ -51,30 +51,32 @@ ul {
 	align-content: center;
 	padding: 0 5%;
 	height: 80vh;
+	max-width: 728px;
+	margin: 0 auto;
 
-	&.easy, &.hard {
-    grid-template-columns: repeat(4, calc(25vw - 20px));
-    grid-template-rows: repeat(2, calc((25vw - 20px) + 10vw));
+	&.easy {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 20vh);
 
-		@media screen and (min-width: 728px) {
-			grid-template-columns: repeat(4, 100px);
-			grid-template-rows: repeat(2, 150px);
-		}
+		// @media screen and (min-width: 728px) {
+	 //    grid-template-columns: repeat(4, 1fr);
+	 //    grid-template-rows: repeat(3, 1fr);
+		// }
 	}
 
 	&.hard {
-    grid-template-columns: repeat(4, calc(25vw - 20px));
-    grid-template-rows: repeat(4, calc((25vw - 20px) + 10vw));	
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 15vh);
     
-   	@media screen and (min-width: 660px) {
-			grid-template-columns: repeat(4, 75px);
-			grid-template-rows: repeat(4, 125px);
-		}	
+  //  	@media screen and (min-width: 660px) {
+		// 	grid-template-columns: repeat(4, 75px);
+		// 	grid-template-rows: repeat(4, 125px);
+		// }	
 
-		@media screen and (min-width: 1224px) {
-			grid-template-columns: repeat(8, 75px);
-			grid-template-rows: repeat(2, 125px);
-		}	
+		// @media screen and (min-width: 1224px) {
+		// 	grid-template-columns: repeat(8, 75px);
+		// 	grid-template-rows: repeat(2, 125px);
+		// }	
 	}
 
 
