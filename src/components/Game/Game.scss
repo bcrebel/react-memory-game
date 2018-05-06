@@ -1,5 +1,10 @@
 $putty: #f2f2f2;
 
+#root {
+	height: 100vh;
+	overflow: hidden;
+}
+
 .header {
 	background-color: rebeccapurple;
 	height: 50px;
@@ -9,20 +14,32 @@ $putty: #f2f2f2;
 	color: white;
 }
 
-.intro {
-	height: 25vh;
-}
-
 .start {
 	background-color: orange;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
 	width: 100vw;
 	position: absolute;
 	height: 100vh;
 	z-index: 1;
 }
 
-.header {
-	background-color: rebeccapurple;
+.timer {
+	font-size: 30px;
+}
+
+.intro {
+	text-align: center;
+	height: 20vh;
+}
+
+.stats {
+	height: calc(20vh - 50px);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
 }
 
 ul {
@@ -33,7 +50,7 @@ ul {
 	justify-content: center;
 	align-content: center;
 	padding: 0 5%;
-	height: 75vh;
+	height: 80vh;
 
 	&.easy, &.hard {
     grid-template-columns: repeat(4, calc(25vw - 20px));

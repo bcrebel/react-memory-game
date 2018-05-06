@@ -1,44 +1,7 @@
 import React from 'react'
-import { levels } from './Levels'
 import styles from './Game.scss'
-import Timer from '../Timer/Timer'
-
-
-class Start extends React.Component {
-	constructor(props) {
-		super(props)
-	}
-
-	render() {
-		const greeting = this.props.newPlayer ? 'Ready for Another Round?' : 'Welcome to Memory!'
-		const prompt = this.props.lowestTime === this.props.latestTime ? 'Congrats! You made a new time' : 'Latest Time:'
-		
-		const Time = (
-			<div>
-				<p>{prompt}</p> 
-				{this.props.lowestTime === this.props.latestTime &&
-					<p>{this.props.lowestTime}</p>
-				}
-				{this.props.latestTime > this.props.lowestTime &&
-					<div>
-						<p>{this.props.latestTime}</p>
-						<p>Time to Beat:</p>
-						<p>{this.props.lowestTime}</p>
-					</div>
-				}
-			</div>
-		)
-
-		return (
-			<div>
-				<h1>{greeting}</h1>
-				{this.props.lowestTime != '0:00' && Time}
-				<p>Choose your level</p>
-				{this.props.children}
-			</div>
-		)
-	}
-}
+import { levels } from './Levels'
+import Start from './Start'
 
 class Card extends React.Component {
 	constructor(props) {
@@ -214,27 +177,26 @@ class CardContainer extends React.Component {
 			return `${m}:${ss}`
 		} 
 		
-		const Timer = ({ time = 0 }) => <div className={styles.timer}>{formatTime(time)}</div>
+		const Timer = ({ time = 0 }) => <p className={styles.timer}>{formatTime(time)}</p>
 		let lowestTimeFormat = formatTime(this.state.lowestTime[this.state.level])
 		let latestTimeFormat = formatTime(this.state.latestTime)
 
 		return (
 			<div style={{position: 'relative'}}>
-				<div style={this.state.gameStarted ? {display: 'none'} : {display: 'block'}} className={styles.start}>
+				<div style={this.state.gameStarted ? {display: 'none'} : {display: 'flex'}} className={styles.start}>
 					<Start newPlayer={this.state.lowestTime[this.state.level] != ''} lowestTime={lowestTimeFormat} latestTime={latestTimeFormat}>
 						<button onClick={() => this.formatBoard('easy')}>Easy</button>
 						<button onClick={() => this.formatBoard('hard')}>Hard</button>
 					</Start>
 				</div>
-				<h1 className={styles.header}>MEMORY GAME</h1>
 				<div className={styles.intro}>
-					<Timer time={this.state.secondsElapsed} />
-					{this.state.lowestTime[this.state.level] != '' && 
-						<div>
-							<p>Time to beat:</p>
-							<p>{lowestTimeFormat}</p>
-						</div>
-					}
+					<h1 className={styles.header}>MEMORY GAME</h1>
+					<div className={styles.stats}>
+						<Timer time={this.state.secondsElapsed} />
+						{this.state.lowestTime[this.state.level] != '' && 
+							<p>Time to beat: {lowestTimeFormat}</p>
+						}
+					</div>
 				</div>
 				<ul className={styles[this.state.level]}>
 					{this.state.cards.map((card, idx) => {

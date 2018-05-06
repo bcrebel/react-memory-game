@@ -20,7 +20,7 @@ export default vo => `<!DOCTYPE html>
   </head>
 
   <body>
-    <div id="root"><div>${vo.html}</div></div>
+    <div style="height: 100vh; overflow: hidden;" id="root"><div>${vo.html}</div></div>
     ${getDeferScript(vo.manifestJSBundle)}
     ${getDeferScript(vo.vendorJSBundle)}
     ${getDeferScript(vo.mainJSBundle)}
