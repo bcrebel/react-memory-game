@@ -21,10 +21,9 @@ class Start extends React.Component {
 		return (
 			<div>
 				<h1>{greeting}</h1>
-				{this.props.lowestTime && Time}
+				{this.props.lowestTime != '0:00' && Time}
 				<p>Choose your level</p>
-				<button>Easy</button>
-				<button>Hard</button>
+				{this.props.children}
 			</div>
 		)
 	}
@@ -50,6 +49,8 @@ class CardContainer extends React.Component {
 		super(props)
 		this.state = {
 			gameStarted: false,
+			secondsElapsed: 0,
+			lowestTime: '',
 			level: 'easy',
 			matchNumber: '',
 			cards: [],
@@ -64,6 +65,21 @@ class CardContainer extends React.Component {
 		this.hasId = this.hasId.bind(this)
 	}
 
+
+  // componentDidMount() {
+  //   this.interval = setInterval(this.tick.bind(this), 1000)
+  // }
+
+  componentWillUnmount() {
+    clearInterval(this.interval)
+  }
+
+  tick() {
+    this.setState({
+      secondsElapsed: this.state.secondsElapsed + 1,
+    })
+  }
+
 	flipLater(ids) {
 		let _cards = this.state.cards
 		ids.forEach(id => _cards[id].position = null)
@@ -75,8 +91,16 @@ class CardContainer extends React.Component {
 	}
 
 	restartGame() {
-		this.setState({gameStarted: false})
-		this.formatBoard()
+		console.log('called')
+		this.setState({
+			gameStarted: false,
+			secondsElapsed: 0,
+			matches: [],
+			queue: []
+		})
+
+		clearInterval(this.interval)
+		// this.formatBoard()
 	}
 
 	clickEvent(id, type) {
@@ -109,11 +133,24 @@ class CardContainer extends React.Component {
 		}
 
 		if(this.state.matches.length === this.state.cards.length - this.state.matchNumber) {
+			console.log(this.state)
 			if(this.state.queue.length === 1) {
- 				if(Object.values(this.state.queue[0])[0] === type) {
+				if(Object.values(this.state.queue[0])[0] === type) {
+
+					let _lowestTime
+					if(this.state.lowestTime != '') {
+						_lowestTime = this.state.lowestTime < this.state.secondsElapsed ? this.state.lowestTime : this.state.secondsElapsed
+					} else {
+						_lowestTime = this.state.secondsElapsed
+					}
+
+					this.setState({
+						lowestTime: _lowestTime
+					})
+
 					setTimeout(function() {
 						this.restartGame()
-					}.bind(this), 1500)
+					}.bind(this), 2000)
 				}
 			}
 		}
@@ -124,13 +161,15 @@ class CardContainer extends React.Component {
 		return match.length > 0;
 	}
 
-	formatBoard() {
+	formatBoard(difficulty) {
 		let symbols;
-		if(this.state.level === 'easy') {
+		if(difficulty === 'easy') {
+			this.setState({level: 'easy'})
 			symbols = levels[0].cards
 		}
 
-		if(this.state.level === 'hard') {
+		if(difficulty === 'hard') {
+			this.setState({level: 'hard'})
 			symbols = levels[1].cards
 		}
 
@@ -146,17 +185,36 @@ class CardContainer extends React.Component {
 			matchNumber: (this.state.level === 'easy' || this.state.level === 'hard') ? 2 : 3,
 			gameStarted: true
 		})
+
+		this.interval = setInterval(this.tick.bind(this), 1000)
 	}
 
-	render() {  
+	render() { 
+
+		const formatTime = time => {
+			if (time < 0) return '--:--'
+			const h = Math.floor(time / 3600)
+			const m = Math.floor((time % 3600) / 60)
+			const mm = m < 10 ? `0${m}` : m
+			const s = time % 60
+			const ss = s < 10 ? `0${s}` : s
+			if (h > 0) return [h, mm, ss].join(':')
+			return `${m}:${ss}`
+		} 
+		
+		const Timer = ({ time = 0 }) => <div className={styles.timer}>{formatTime(time)}</div>
+		let lowestTime = formatTime(this.state.lowestTime)
 		return (
 			<div style={{position: 'relative'}}>
-				<div style={this.state.gameStarted ? {display: 'none'} : {display: 'block'}} className={styles.start} onClick={this.formatBoard}>
-					<Start newPlayer={this.state.gameStarted} lowestTime='0:34'/>
+				<div style={this.state.gameStarted ? {display: 'none'} : {display: 'block'}} className={styles.start}>
+					<Start newPlayer={this.state.lowestTime != ''} lowestTime={lowestTime}>
+						<button onClick={() => this.formatBoard('easy')}>Easy</button>
+						<button onClick={() => this.formatBoard('hard')}>Hard</button>
+					</Start>
 				</div>
 				<h1 className={styles.header}>NYT Games Code Test</h1>
 				<div className={styles.intro}>
-					<Timer />
+					<Timer time={this.state.secondsElapsed} />
 				</div>
 				<ul className={styles[this.state.level]}>
 					{this.state.cards.map((card, idx) => {
