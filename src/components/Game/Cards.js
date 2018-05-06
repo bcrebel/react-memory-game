@@ -11,10 +11,21 @@ class Start extends React.Component {
 
 	render() {
 		const greeting = this.props.newPlayer ? 'Ready for Another Round?' : 'Welcome to Memory!'
+		const prompt = this.props.lowestTime === this.props.latestTime ? 'Congrats! You made a new time' : 'Latest Time:'
+		
 		const Time = (
 			<div>
-				<p>Lowest Time</p>
-				<p>{this.props.lowestTime}</p>
+				<p>{prompt}</p> 
+				{this.props.lowestTime === this.props.latestTime &&
+					<p>{this.props.lowestTime}</p>
+				}
+				{this.props.latestTime > this.props.lowestTime &&
+					<div>
+						<p>{this.props.latestTime}</p>
+						<p>Time to Beat:</p>
+						<p>{this.props.lowestTime}</p>
+					</div>
+				}
 			</div>
 		)
 
@@ -50,7 +61,8 @@ class CardContainer extends React.Component {
 		this.state = {
 			gameStarted: false,
 			secondsElapsed: 0,
-			lowestTime: '',
+			latestTime: '',
+			lowestTime: {'easy': '', 'hard': ''},
 			level: 'easy',
 			matchNumber: '',
 			cards: [],
@@ -65,12 +77,7 @@ class CardContainer extends React.Component {
 		this.hasId = this.hasId.bind(this)
 	}
 
-
-  // componentDidMount() {
-  //   this.interval = setInterval(this.tick.bind(this), 1000)
-  // }
-
-  componentWillUnmount() {
+  componentWillUnmount() { // Remove later
     clearInterval(this.interval)
   }
 
@@ -90,7 +97,6 @@ class CardContainer extends React.Component {
 	}
 
 	restartGame() {
-		console.log('called')
 		this.setState({
 			gameStarted: false,
 			secondsElapsed: 0,
@@ -99,7 +105,6 @@ class CardContainer extends React.Component {
 		})
 
 		clearInterval(this.interval)
-		// this.formatBoard()
 	}
 
 	clickEvent(id, type) {
@@ -134,19 +139,24 @@ class CardContainer extends React.Component {
 		}
 
 		if(this.state.matches.length === this.state.cards.length - this.state.matchNumber) {
-			console.log(this.state)
 			if(this.state.queue.length === 1) {
 				if(Object.values(this.state.queue[0])[0] === type) {
 
-					let _lowestTime
-					if(this.state.lowestTime != '') {
-						_lowestTime = this.state.lowestTime < this.state.secondsElapsed ? this.state.lowestTime : this.state.secondsElapsed
+					let _lowestTime = ''
+					if(this.state.lowestTime[this.state.level] != '') {
+						_lowestTime = this.state.lowestTime[this.state.level] < this.state.secondsElapsed ? this.state.lowestTime[this.state.level] : this.state.secondsElapsed
+					
 					} else {
 						_lowestTime = this.state.secondsElapsed
 					}
 
+					let obj = this.state.lowestTime
+
+					obj[this.state.level] = _lowestTime
+
 					this.setState({
-						lowestTime: _lowestTime
+						lowestTime: obj,
+						latestTime: this.state.secondsElapsed
 					})
 
 					setTimeout(function() {
@@ -204,18 +214,26 @@ class CardContainer extends React.Component {
 		} 
 		
 		const Timer = ({ time = 0 }) => <div className={styles.timer}>{formatTime(time)}</div>
-		let lowestTime = formatTime(this.state.lowestTime)
+		let lowestTimeFormat = formatTime(this.state.lowestTime[this.state.level])
+		let latestTimeFormat = formatTime(this.state.latestTime)
+
 		return (
 			<div style={{position: 'relative'}}>
 				<div style={this.state.gameStarted ? {display: 'none'} : {display: 'block'}} className={styles.start}>
-					<Start newPlayer={this.state.lowestTime != ''} lowestTime={lowestTime}>
+					<Start newPlayer={this.state.lowestTime[this.state.level] != ''} lowestTime={lowestTimeFormat} latestTime={latestTimeFormat}>
 						<button onClick={() => this.formatBoard('easy')}>Easy</button>
 						<button onClick={() => this.formatBoard('hard')}>Hard</button>
 					</Start>
 				</div>
-				<h1 className={styles.header}>NYT Games Code Test</h1>
+				<h1 className={styles.header}>MEMORY GAME</h1>
 				<div className={styles.intro}>
 					<Timer time={this.state.secondsElapsed} />
+					{this.state.lowestTime[this.state.level] != '' && 
+						<div>
+							<p>Time to beat:</p>
+							<p>{lowestTimeFormat}</p>
+						</div>
+					}
 				</div>
 				<ul className={styles[this.state.level]}>
 					{this.state.cards.map((card, idx) => {
