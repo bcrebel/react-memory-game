@@ -85,8 +85,7 @@ class CardContainer extends React.Component {
 		ids.forEach(id => _cards[id].position = null)
 
 		this.setState({
-			cards: _cards,
-			queue: []
+			cards: _cards
 		})
 	}
 
@@ -126,6 +125,8 @@ class CardContainer extends React.Component {
 				let cardsToFlip = this.state.queue.concat(obj)
 				cardsToFlip = cardsToFlip.map(card => Object.keys(card)[0])
 				
+				this.setState({queue: []})			
+
 				setTimeout(function() {
 					this.flipLater(cardsToFlip)
 				}.bind(this), 1000);
