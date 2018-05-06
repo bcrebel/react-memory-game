@@ -100,6 +100,7 @@ class CardContainer extends React.Component {
 		this.setState({
 			gameStarted: false,
 			secondsElapsed: 0,
+			cards: [],
 			matches: [],
 			queue: []
 		})
