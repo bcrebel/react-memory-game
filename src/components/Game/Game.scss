@@ -100,7 +100,7 @@ body * {
 	font-size: 27px;
 	background-color: $yellow;
 	padding: 5px 10px;
-	margin-bottom: 3px;
+	margin-right: 15px;
 }
 
 .intro {
@@ -112,7 +112,6 @@ body * {
 	height: calc(20vh - 50px);
 	display: flex;
 	background-color: white;
-	flex-direction: column;
 	align-items: center;
 	justify-content: center;
 	font-family: $font-century;

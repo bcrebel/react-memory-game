@@ -2,6 +2,8 @@ import React from 'react'
 import styles from './Game.scss'
 import { levels } from './Levels'
 import Start from './Start'
+import FlipMove from 'react-flip-move';
+let lodashShuffle = require('lodash.shuffle')
 
 class Card extends React.Component {
 	constructor(props) {
@@ -11,7 +13,7 @@ class Card extends React.Component {
 	render() {  
 
 		return (
-			<li type={this.props.type} id={this.props.id} onClick={this.props.onClick} className={this.props.className}>
+			<li key={this.props.key} type={this.props.type} id={this.props.id} onClick={this.props.onClick} className={this.props.className}>
 				{this.props.children}
 			</li>
 		)
@@ -30,7 +32,8 @@ class CardContainer extends React.Component {
 			matchNumber: '',
 			cards: [],
 			matches: [],
-			queue: []
+			queue: [],
+			order: []
 		}
 
 		this.restartGame = this.restartGame.bind(this)
@@ -38,10 +41,11 @@ class CardContainer extends React.Component {
 		this.clickEvent = this.clickEvent.bind(this)
 		this.flipLater = this.flipLater.bind(this)
 		this.hasId = this.hasId.bind(this)
+		this.shuffle = this.shuffle.bind(this)
 	}
 
   componentWillUnmount() { // Remove later
-    clearInterval(this.interval)
+    clearInterval(this.timeInterval)
   }
 
   tick() {
@@ -52,10 +56,24 @@ class CardContainer extends React.Component {
 
 	flipLater(ids) {
 		let _cards = this.state.cards
-		ids.forEach(id => _cards[id].position = null)
+
+		ids.forEach((id) => {
+			console.log(id)
+			_cards.forEach((card) => {
+				if(card.key.toString() === id) {
+					card.position = null
+				}
+			})
+		})
 
 		this.setState({
 			cards: _cards
+		})
+	}
+
+	shuffle() {
+		this.setState({
+			cards: lodashShuffle(this.state.cards)
 		})
 	}
 
@@ -68,14 +86,20 @@ class CardContainer extends React.Component {
 			queue: []
 		})
 
-		clearInterval(this.interval)
+		clearInterval(this.timeInterval)
+		clearInterval(this.shuffleInterval)
 	}
 
 	clickEvent(id, type) {
 		let obj = {}
 		obj[id] = type
 		let _cards = this.state.cards
-		_cards[id].position = 'flipped'
+
+		_cards.forEach((card) => {
+			if(card.key === id) {
+				card.position = 'flipped'
+			}
+		})
 
 		this.setState({ 
 			queue: this.state.queue.concat(obj),
@@ -148,10 +172,11 @@ class CardContainer extends React.Component {
 			symbols = levels[1].cards
 		}
 
-		let cards = symbols.map((symbol) => { // this is prolly not gonna work
+		let cards = symbols.map((symbol, idx) => { 
 			return {
 				type: symbol,
-				position: null
+				position: null,
+				key: idx
 			}
 		})
 
@@ -161,11 +186,11 @@ class CardContainer extends React.Component {
 			gameStarted: true
 		})
 
-		this.interval = setInterval(this.tick.bind(this), 1000)
+		this.timeInterval = setInterval(this.tick.bind(this), 1000)
+		this.shuffleInterval = setInterval(this.shuffle.bind(this), 15000)
 	}
 
 	render() { 
-
 		const formatTime = time => {
 			if (time < 0) return '--:--'
 			const h = Math.floor(time / 3600)
@@ -199,16 +224,16 @@ class CardContainer extends React.Component {
 						}
 					</div>
 				</div>
-				<ul className={styles[this.state.level]}>
+				<FlipMove staggerDurationBy='20' typeName='ul' className={styles[this.state.level]}>
 					{this.state.cards.map((card, idx) => {
-						return <Card key={'card-' + idx} type={card.type} onClick={() => this.clickEvent(idx, card.type)} className={styles[card.position]}>
+						return <Card key={card.key} type={card.type} onClick={() => this.clickEvent(card.key, card.type)} className={styles[card.position]}>
 							<div>
 								<figure className={styles.front}></figure>
 								<figure className={styles.back}>{card.type}</figure>
 							</div>
 						</Card>
 					})}
-				</ul>
+				</FlipMove>
 			</div>
 		)
 	}
