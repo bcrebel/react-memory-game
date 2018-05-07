@@ -6,11 +6,11 @@ import FlipMove from 'react-flip-move';
 let lodashShuffle = require('lodash.shuffle')
 
 function ProgressBar(props) {
-  return (
-    <div className={styles.progressContainer}>
-    	<div className={props.className}></div>
-    </div>
-  );
+	return (
+		<div className={styles.progressContainer}>
+			<div className={props.className}></div>
+		</div>
+	);
 }
 
 class Card extends React.Component {
@@ -35,32 +35,27 @@ class CardContainer extends React.Component {
 			gameStarted: false,
 			secondsElapsed: 0,
 			latestTime: '',
-			lowestTime: {'easy': '', 'hard': ''},
+			lowestTime: {'easy': '', 'hard': '', 'crazy': ''},
 			level: 'easy',
 			matchNumber: '',
+			shuffleDuration: '15',
 			cards: [],
 			matches: [],
 			queue: [],
-			shuffleDuration: '15'
 		}
 
 		this.restartGame = this.restartGame.bind(this)
 		this.formatBoard = this.formatBoard.bind(this)
 		this.clickEvent = this.clickEvent.bind(this)
 		this.flipLater = this.flipLater.bind(this)
-		this.hasId = this.hasId.bind(this)
 		this.shuffle = this.shuffle.bind(this)
 	}
 
-  componentWillUnmount() { // Remove later
-    clearInterval(this.timeInterval)
-  }
-
-  tick() {
-    this.setState({
-      secondsElapsed: this.state.secondsElapsed + 1,
-    })
-  }
+	tick() {
+		this.setState({
+			secondsElapsed: this.state.secondsElapsed + 1,
+		})
+	}
 
 	flipLater(ids) {
 		let _cards = this.state.cards
@@ -101,6 +96,7 @@ class CardContainer extends React.Component {
 		let obj = {}
 		obj[id] = type
 		let _cards = this.state.cards
+		let queueLength = this.state.queue.length
 
 		_cards.forEach((card) => {
 			if(card.key === id) {
@@ -108,19 +104,52 @@ class CardContainer extends React.Component {
 			}
 		})
 
-		this.setState({ 
-			queue: this.state.queue.concat(obj),
+		this.setState({
 			cards: _cards
 		})
 
-		if(this.state.queue.length === 1) {
-			if(Object.values(this.state.queue[0])[0] === type) {
-				// Empty queue and move items to matches 
-				this.setState({
-					matches: this.state.matches.concat(this.state.queue.concat(obj)),
-					queue: []
-				})
+		if(queueLength === 0) {
+			this.setState({ 
+				queue: this.state.queue.concat(obj)
+			})
+		}
 
+		if(queueLength > 0) {
+			// Compare current symbol with last symbol in queue
+			if(Object.values(this.state.queue[queueLength - 1])[0] === type) {
+				if(queueLength < this.state.matchNumber - 1) {
+					this.setState({
+						queue: this.state.queue.concat(obj)
+					})
+				} else if(queueLength === this.state.matchNumber - 1) { // Check if winning selection
+					if(this.state.matches.length === this.state.cards.length - this.state.matchNumber) {
+						
+						let _lowestTime = ''
+						
+						if(this.state.lowestTime[this.state.level] != '') {
+							_lowestTime = this.state.lowestTime[this.state.level] < this.state.secondsElapsed ? this.state.lowestTime[this.state.level] : this.state.secondsElapsed
+						} else {
+							_lowestTime = this.state.secondsElapsed
+						}
+
+						let obj = this.state.lowestTime
+						obj[this.state.level] = _lowestTime
+
+						this.setState({
+							lowestTime: obj,
+							latestTime: this.state.secondsElapsed
+						})
+
+						setTimeout(function() {
+							this.restartGame()
+						}.bind(this), 2000)
+					} else {
+						this.setState({
+							matches: this.state.matches.concat(this.state.queue.concat(obj)),
+							queue: []
+						})
+					}
+				}
 			} else {
 				let cardsToFlip = this.state.queue.concat(obj)
 				cardsToFlip = cardsToFlip.map(card => Object.keys(card)[0])
@@ -132,51 +161,28 @@ class CardContainer extends React.Component {
 				}.bind(this), 1000);
 			}
 		}
-
-		if(this.state.matches.length === this.state.cards.length - this.state.matchNumber) {
-			if(this.state.queue.length === 1) {
-				if(Object.values(this.state.queue[0])[0] === type) {
-
-					let _lowestTime = ''
-					if(this.state.lowestTime[this.state.level] != '') {
-						_lowestTime = this.state.lowestTime[this.state.level] < this.state.secondsElapsed ? this.state.lowestTime[this.state.level] : this.state.secondsElapsed
-					
-					} else {
-						_lowestTime = this.state.secondsElapsed
-					}
-
-					let obj = this.state.lowestTime
-
-					obj[this.state.level] = _lowestTime
-
-					this.setState({
-						lowestTime: obj,
-						latestTime: this.state.secondsElapsed
-					})
-
-					setTimeout(function() {
-						this.restartGame()
-					}.bind(this), 2000)
-				}
-			}
-		}
-	}
-
-	hasId(id, arr) {
-		let match = arr.filter(item => Object.keys(item)[0] == id)
-		return match.length > 0;
 	}
 
 	formatBoard(difficulty) {
-		let symbols;
+		let symbols
+		let _matchNumber
+
 		if(difficulty === 'easy') {
 			this.setState({level: 'easy'})
 			symbols = levels[0].cards
+			_matchNumber = 2
 		}
 
 		if(difficulty === 'hard') {
 			this.setState({level: 'hard'})
 			symbols = levels[1].cards
+			_matchNumber = 2
+		}
+
+		if(difficulty === 'crazy') {
+			this.setState({level: 'crazy'})
+			symbols = levels[2].cards
+			_matchNumber = 3
 		}
 
 		let cards = symbols.map((symbol, idx) => { 
@@ -189,7 +195,7 @@ class CardContainer extends React.Component {
 
 		this.setState({
 			cards: cards,
-			matchNumber: (this.state.level === 'easy' || this.state.level === 'hard') ? 2 : 3,
+			matchNumber: _matchNumber,
 			gameStarted: true
 		})
 
@@ -220,6 +226,7 @@ class CardContainer extends React.Component {
 					<Start newPlayer={this.state.lowestTime[this.state.level] != ''} lowestTime={lowestTimeFormat} latestTime={latestTimeFormat}>
 						<p className={styles.level} onClick={() => this.formatBoard('easy')}>Easy</p>
 						<p className={styles.level} onClick={() => this.formatBoard('hard')}>Hard</p>
+						<p className={styles.level} onClick={() => this.formatBoard('crazy')}>Crazy</p>
 					</Start>
 				</div>
 				<div className={styles.intro}>
