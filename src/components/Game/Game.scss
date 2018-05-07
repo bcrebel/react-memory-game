@@ -12,7 +12,7 @@ $font-century: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif;
 }
 
 body {
-	background-color: darken($grey, 10%);
+	background-color: darken($grey, 5%);
 }
 
 body * {
@@ -111,7 +111,6 @@ body * {
 .stats {
 	height: calc(20vh - 50px);
 	display: flex;
-	background-color: white;
 	align-items: center;
 	justify-content: center;
 	font-family: $font-century;
@@ -227,5 +226,30 @@ figure {
 		.easy & {
 			border-width: 15px;
 		}
+	}
+}
+
+.progressContainer {
+	height: 5px;
+	width: 100%;
+	background-color: white;
+
+	div {
+		background-color: $pink;
+		height: 100%;
+	}
+}
+
+.shuffle-15 {
+	animation: shuffleIn 15s infinite linear;
+}
+
+@keyframes shuffleIn {
+	0% {
+		width: 0%;
+	}
+
+	100% {
+		width: 100%;
 	}
 }

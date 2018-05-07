@@ -5,6 +5,14 @@ import Start from './Start'
 import FlipMove from 'react-flip-move';
 let lodashShuffle = require('lodash.shuffle')
 
+function ProgressBar(props) {
+  return (
+    <div className={styles.progressContainer}>
+    	<div className={props.className}></div>
+    </div>
+  );
+}
+
 class Card extends React.Component {
 	constructor(props) {
 		super(props)
@@ -33,7 +41,7 @@ class CardContainer extends React.Component {
 			cards: [],
 			matches: [],
 			queue: [],
-			order: []
+			shuffleDuration: '15'
 		}
 
 		this.restartGame = this.restartGame.bind(this)
@@ -58,7 +66,6 @@ class CardContainer extends React.Component {
 		let _cards = this.state.cards
 
 		ids.forEach((id) => {
-			console.log(id)
 			_cards.forEach((card) => {
 				if(card.key.toString() === id) {
 					card.position = null
@@ -205,7 +212,8 @@ class CardContainer extends React.Component {
 		const Timer = ({ time = 0 }) => <p className={styles.timer}>{formatTime(time)}</p>
 		let lowestTimeFormat = formatTime(this.state.lowestTime[this.state.level])
 		let latestTimeFormat = formatTime(this.state.latestTime)
-
+		let progressClass = this.state.gameStarted ? 'shuffle-15' : null
+		
 		return (
 			<div style={{position: 'relative'}}>
 				<div style={this.state.gameStarted ? {display: 'none'} : {display: 'block'}} className={styles.start}>
@@ -223,8 +231,9 @@ class CardContainer extends React.Component {
 							<p>Time to beat: {lowestTimeFormat}</p>
 						}
 					</div>
+					<ProgressBar className={styles[progressClass]} />
 				</div>
-				<FlipMove staggerDurationBy='20' typeName='ul' className={styles[this.state.level]}>
+				<FlipMove typeName='ul' className={styles[this.state.level]}>
 					{this.state.cards.map((card, idx) => {
 						return <Card key={card.key} type={card.type} onClick={() => this.clickEvent(card.key, card.type)} className={styles[card.position]}>
 							<div>

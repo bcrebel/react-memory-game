@@ -16,7 +16,7 @@ class Start extends React.Component {
 				{this.props.lowestTime === this.props.latestTime &&
 					<p className={styles.time}>{this.props.lowestTime}</p>
 				}
-				{this.props.latestTime > this.props.lowestTime &&
+				{this.props.latestTime > this.props.lowestTime && // TO DO: Need to store times based on game difficulty
 					<div>
 						<p className={styles.time}>{this.props.latestTime}</p>
 						<p>Time to Beat:</p>
