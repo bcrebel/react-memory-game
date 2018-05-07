@@ -183,14 +183,15 @@ class CardContainer extends React.Component {
 
 		return (
 			<div style={{position: 'relative'}}>
-				<div style={this.state.gameStarted ? {display: 'none'} : {display: 'flex'}} className={styles.start}>
+				<div style={this.state.gameStarted ? {display: 'none'} : {display: 'block'}} className={styles.start}>
 					<Start newPlayer={this.state.lowestTime[this.state.level] != ''} lowestTime={lowestTimeFormat} latestTime={latestTimeFormat}>
-						<button onClick={() => this.formatBoard('easy')}>Easy</button>
-						<button onClick={() => this.formatBoard('hard')}>Hard</button>
+						<p className={styles.level} onClick={() => this.formatBoard('easy')}>Easy</p>
+						<p className={styles.level} onClick={() => this.formatBoard('hard')}>Hard</p>
 					</Start>
 				</div>
 				<div className={styles.intro}>
-					<h1 className={styles.header}>MEMORY GAME</h1>
+					<h1 className={styles.header}>Memory Game</h1>
+					<p className={styles.restart} onClick={this.restartGame}>↻</p>
 					<div className={styles.stats}>
 						<Timer time={this.state.secondsElapsed} />
 						{this.state.lowestTime[this.state.level] != '' && 
