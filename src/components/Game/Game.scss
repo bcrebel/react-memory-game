@@ -160,6 +160,7 @@ ul {
 		font-size: 16px;
 
 		@media screen and (min-width: 768px) {
+			grid-template-columns: repeat(6, 90px);
 			grid-template-rows: repeat(4, 110px);
 			font-size: 34px;
 		}

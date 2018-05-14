@@ -1,4 +1,3 @@
-# NYT Games Team Web Code Test
 
 MEMORY GAME
 On localhost:3000:

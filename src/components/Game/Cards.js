@@ -2,7 +2,7 @@ import React from 'react'
 import styles from './Game.scss'
 import { levels } from './Levels'
 import Start from './Start'
-import FlipMove from 'react-flip-move';
+import FlipMove from 'react-flip-move'
 let lodashShuffle = require('lodash.shuffle')
 
 function ProgressBar(props) {
@@ -88,7 +88,6 @@ class CardContainer extends React.Component {
 			queue: []
 		})
 
-		clearInterval(this.timeInterval)
 		clearInterval(this.shuffleInterval)
 	}
 
@@ -139,6 +138,8 @@ class CardContainer extends React.Component {
 							lowestTime: obj,
 							latestTime: this.state.secondsElapsed
 						})
+						
+						clearInterval(this.timeInterval)
 
 						setTimeout(function() {
 							this.restartGame()
