@@ -205,7 +205,6 @@ class CardContainer extends React.Component {
 
 	render() { 
 		const formatTime = time => {
-			console.log(time)
 			if (time < 0) return '--:--'
 			const h = Math.floor(time / 3600)
 			const m = Math.floor((time % 3600) / 60)

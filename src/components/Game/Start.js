@@ -9,7 +9,6 @@ class Start extends React.Component {
 	render() {
 		const greeting = this.props.newPlayer ? 'Ready for Another Round?' : 'Memory Game'
 		const prompt = this.props.lowestTime === this.props.latestTime ? 'Congrats! You made a new time:' : 'Latest Time:'
-		console.log(this.props.latestTime)
 		const Time = (
 			<div>
 				<p className={styles.prompt}>{prompt}</p> 
