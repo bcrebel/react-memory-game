@@ -34,7 +34,7 @@ class CardContainer extends React.Component {
 		this.state = {
 			gameStarted: false,
 			secondsElapsed: 0,
-			latestTime: '',
+			latestTime: 0,
 			lowestTime: {'easy': '', 'hard': '', 'crazy': ''},
 			level: 'easy',
 			matchNumber: '',
@@ -82,12 +82,12 @@ class CardContainer extends React.Component {
 	restartGame() {
 		this.setState({
 			gameStarted: false,
-			secondsElapsed: 0,
 			cards: [],
 			matches: [],
 			queue: []
 		})
-
+		
+		clearInterval(this.timeInterval)
 		clearInterval(this.shuffleInterval)
 	}
 
@@ -123,19 +123,16 @@ class CardContainer extends React.Component {
 				} else if(queueLength === this.state.matchNumber - 1) { // Check if winning selection
 					if(this.state.matches.length === this.state.cards.length - this.state.matchNumber) {
 						
-						let _lowestTime = ''
+						let _lowestTime = this.state.lowestTime
 						
-						if(this.state.lowestTime[this.state.level] != '') {
-							_lowestTime = this.state.lowestTime[this.state.level] < this.state.secondsElapsed ? this.state.lowestTime[this.state.level] : this.state.secondsElapsed
+						if(_lowestTime[this.state.level] != '') {
+							_lowestTime[this.state.level] = this.state.lowestTime[this.state.level] < this.state.secondsElapsed ? this.state.lowestTime[this.state.level] : this.state.secondsElapsed
 						} else {
-							_lowestTime = this.state.secondsElapsed
+							_lowestTime[this.state.level] = this.state.secondsElapsed
 						}
 
-						let obj = this.state.lowestTime
-						obj[this.state.level] = _lowestTime
-
 						this.setState({
-							lowestTime: obj,
+							lowestTime: _lowestTime,
 							latestTime: this.state.secondsElapsed
 						})
 						
@@ -195,9 +192,11 @@ class CardContainer extends React.Component {
 		})
 
 		this.setState({
+			secondsElapsed: 0,
 			cards: cards,
 			matchNumber: _matchNumber,
-			gameStarted: true
+			gameStarted: true,
+			latestTime: ''
 		})
 
 		this.timeInterval = setInterval(this.tick.bind(this), 1000)
@@ -206,6 +205,7 @@ class CardContainer extends React.Component {
 
 	render() { 
 		const formatTime = time => {
+			console.log(time)
 			if (time < 0) return '--:--'
 			const h = Math.floor(time / 3600)
 			const m = Math.floor((time % 3600) / 60)
