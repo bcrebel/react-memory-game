@@ -1,1 +1,1 @@
-node build/server/main.js
+web: npm run dev
