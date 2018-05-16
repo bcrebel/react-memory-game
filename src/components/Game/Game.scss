@@ -230,7 +230,7 @@ figure {
 		content: '';
 		width: 30px;
 		border-radius: 50%;
-		position: absolute;
+		position: relative;
 		background: $pink;
 		height: 30px;
 		border: solid 6px lighten($blue, 20%);
@@ -243,7 +243,7 @@ figure {
 		}
 	}
 
-	@media screen	and (min-width: 728px) {
+	@media screen and (min-width: 728px) {
 		.crazy &:before {
 			width: 30px;
 			height: 30px;
