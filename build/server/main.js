@@ -269,7 +269,7 @@ class Cards_CardContainer extends Cards___WEBPACK_IMPORTED_MODULE_0_react___defa
 
 	shuffle() {
 		this.setState({
-			// cards: lodashShuffle(this.state.cards)
+			cards: lodashShuffle(this.state.cards)
 		});
 	}
 
@@ -636,7 +636,7 @@ module.exports = require("lodash.shuffle");
 /* 9 */
 /***/ (function(module, exports) {
 
-module.exports = {"main.css":"/main-a6c8acaa02fc6c7d88d0801ea8eaf6b8.css","main.css.map":"/main-a6c8acaa02fc6c7d88d0801ea8eaf6b8.css.map","main.js":"/main-b035af44d7d1efb0a9e5.js","main.js.map":"/main-0374de606d063232885c.js.map","manifest.js":"/manifest-50a66ce7fb466d3c5be8.js","manifest.js.map":"/manifest-74bb03063a25d5f16d84.js.map","vendor.js":"/vendor-fe10ac826c0b389a1cb1.js","vendor.js.map":"/vendor-a96f81ed5dd73f098224.js.map"}
+module.exports = {"main.css":"/main-a6c8acaa02fc6c7d88d0801ea8eaf6b8.css","main.css.map":"/main-a6c8acaa02fc6c7d88d0801ea8eaf6b8.css.map","main.js":"/main-a81d3a5114334d069b4c.js","main.js.map":"/main-0374de606d063232885c.js.map","manifest.js":"/manifest-1f8a35f71748bfe3d5c3.js","manifest.js.map":"/manifest-74bb03063a25d5f16d84.js.map","vendor.js":"/vendor-fe10ac826c0b389a1cb1.js","vendor.js.map":"/vendor-a96f81ed5dd73f098224.js.map"}
 
 /***/ })
 /******/ ]);

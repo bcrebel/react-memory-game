@@ -75,7 +75,7 @@ class CardContainer extends React.Component {
 
 	shuffle() {
 		this.setState({
-			// cards: lodashShuffle(this.state.cards)
+			cards: lodashShuffle(this.state.cards)
 		})
 	}
 
