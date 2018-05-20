@@ -186,6 +186,15 @@ li {
 		position: absolute;
 		transform-style: preserve-3d;
 		transition: transform 1s;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		svg {
+			backface-visibility: hidden;
+			width: 50%;
+			z-index: 1;
+		}
 	}
 }
 
@@ -205,51 +214,10 @@ figure {
 	.crazy & {
 		border-width: 5px;
 	}
-
-	@media screen	and (min-width: 728px) {
-		.easy & {
-			border-width: 15px;
-
-			&:before {
-				width: 60px;
-				height: 60px;
-				border-width: 12px;
-			}
-		}
-
-		.crazy & {
-			border-width: 10px;
-		}
-	}
 }
 
 .front {
 	background: $putty;
-
-	&:before {
-		content: '';
-		width: 30px;
-		border-radius: 50%;
-		position: relative;
-		background: $pink;
-		height: 30px;
-		border: solid 6px lighten($blue, 20%);
-		box-sizing: border-box;
-
-		.crazy & {
-			width: 20px;
-			height: 20px;
-			border-width: 4px;
-		}
-	}
-
-	@media screen and (min-width: 728px) {
-		.crazy &:before {
-			width: 30px;
-			height: 30px;
-			border-width: 6px;
-		}
-	}
 }
 
 .back {
