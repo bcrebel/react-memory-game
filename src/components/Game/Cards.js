@@ -163,24 +163,32 @@ class CardContainer extends React.Component {
 
 	formatBoard(difficulty) {
 		let symbols
-		let _matchNumber
 
 		if(difficulty === 'easy') {
-			this.setState({level: 'easy'})
+			this.setState({
+				level: 'easy',
+				matchNumber: 2
+			})
+			
 			symbols = levels[0].cards
-			_matchNumber = 2
 		}
 
 		if(difficulty === 'hard') {
-			this.setState({level: 'hard'})
+			this.setState({
+				level: 'hard',
+				matchNumber: 2
+			})
+
 			symbols = levels[1].cards
-			_matchNumber = 2
 		}
 
 		if(difficulty === 'crazy') {
-			this.setState({level: 'crazy'})
+			this.setState({
+				level: 'crazy',
+				matchNumber: 3
+			})
+
 			symbols = levels[2].cards
-			_matchNumber = 3
 		}
 
 		let cards = symbols.map((symbol, idx) => { 
@@ -193,8 +201,7 @@ class CardContainer extends React.Component {
 
 		this.setState({
 			secondsElapsed: 0,
-			cards: cards,
-			matchNumber: _matchNumber,
+			cards,
 			gameStarted: true,
 			latestTime: ''
 		})
