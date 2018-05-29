@@ -58,18 +58,17 @@ class CardContainer extends React.Component {
 	}
 
 	flipLater(ids) {
-		let _cards = this.state.cards
 
-		ids.forEach((id) => {
-			_cards.forEach((card) => {
-				if(card.key.toString() === id) {
-					card.position = null
-				}
+		this.setState((prevState) => {
+			cards: prevState.cards.map((card) => {
+				ids.forEach((id) => {
+					if(card.key.toString() === id) {
+						card.position = null
+					}
+				})
+
+				return card
 			})
-		})
-
-		this.setState({
-			cards: _cards
 		})
 	}
 
@@ -94,17 +93,17 @@ class CardContainer extends React.Component {
 	clickEvent(id, type) {
 		let obj = {}
 		obj[id] = type
-		let _cards = this.state.cards
+		
 		let queueLength = this.state.queue.length
 
-		_cards.forEach((card) => {
-			if(card.key === id) {
-				card.position = 'flipped'
-			}
-		})
+		this.setState((prevState) => {
+			cards: prevState.cards.map((card) => {
+				if(card.key === id) {
+					card.position = 'flipped'
+				}
 
-		this.setState({
-			cards: _cards
+				return card
+			})
 		})
 
 		if(queueLength === 0) {
@@ -122,17 +121,20 @@ class CardContainer extends React.Component {
 					})
 				} else if(queueLength === this.state.matchNumber - 1) { // Check if winning selection
 					if(this.state.matches.length === this.state.cards.length - this.state.matchNumber) {
-						
-						let _lowestTime = this.state.lowestTime
-						
-						if(_lowestTime[this.state.level] != '') {
-							_lowestTime[this.state.level] = this.state.lowestTime[this.state.level] < this.state.secondsElapsed ? this.state.lowestTime[this.state.level] : this.state.secondsElapsed
+												
+						if(this.state.lowestTime[this.state.level] != '') {
+							this.setState((prevState) => {
+								prevState.lowestTime[this.state.level] = this.state.lowestTime[this.state.level] < this.state.secondsElapsed ? this.state.lowestTime[this.state.level] : this.state.secondsElapsed
+								lowestTime: prevState.lowestTime
+							})
 						} else {
-							_lowestTime[this.state.level] = this.state.secondsElapsed
+							this.setState((prevState) => {
+								prevState.lowestTime[this.state.level] = this.state.secondsElapsed
+								lowestTime: prevState.lowestTime
+							})
 						}
 
 						this.setState({
-							lowestTime: _lowestTime,
 							latestTime: this.state.secondsElapsed
 						})
 						
