@@ -3,30 +3,12 @@ import styles from './Game.scss'
 import { levels } from './Levels'
 import Start from './Start'
 import FlipMove from 'react-flip-move'
+import Card from './Card'
+import ProgressBar from './ProgressBar'
+import Bullseye from './Bullseye'
+
 let lodashShuffle = require('lodash.shuffle')
 
-function ProgressBar(props) {
-	return (
-		<div className={styles.progressContainer}>
-			<div className={props.className}></div>
-		</div>
-	);
-}
-
-class Card extends React.Component {
-	constructor(props) {
-		super(props)
-	}
-
-	render() {  
-
-		return (
-			<li key={this.props.key} type={this.props.type} id={this.props.id} onClick={this.props.onClick} className={this.props.className}>
-				{this.props.children}
-			</li>
-		)
-	}
-}
 
 class CardContainer extends React.Component {
 	constructor(props) {
@@ -253,10 +235,7 @@ class CardContainer extends React.Component {
 					{this.state.cards.map((card, idx) => {
 						return <Card key={card.key} type={card.type} onClick={() => this.clickEvent(card.key, card.type)} className={styles[card.position]}>
 							<div>
-								<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'>
-  								<circle fill='#1d8ba5' cx='50' cy='50' r='50'/>
-  								<circle fill='#fa5d59' cx='50' cy='50' r='30'/>
-								</svg>
+								<Bullseye />
 								<figure className={styles.front}></figure>
 								<figure className={styles.back}>{card.type}</figure>
 							</div>
