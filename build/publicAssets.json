@@ -1,10 +1,3 @@
 {
-  "main.css": "/main-272c73c932f639f8751a8abf3507a3a1.css",
-  "main.css.map": "/main-272c73c932f639f8751a8abf3507a3a1.css.map",
-  "main.js": "/main-70497bbc6d5dab948c9a.js",
-  "main.js.map": "/main-043205a89cacbfec518c.js.map",
-  "manifest.js": "/manifest-22b35dab5d810566995e.js",
-  "manifest.js.map": "/manifest-a5114e855250c74f7e2f.js.map",
-  "vendor.js": "/vendor-fe10ac826c0b389a1cb1.js",
-  "vendor.js.map": "/vendor-a96f81ed5dd73f098224.js.map"
+  "main.js": "http://localhost:3001/main.js"
 }
