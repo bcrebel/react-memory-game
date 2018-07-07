@@ -64,6 +64,15 @@ body * {
 	}
 }
 
+.loading {
+	position: absolute;
+	background-color: transparentize($blue, 0.25);
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+}
+
 .header {
 	background-color: $blue;
 	font-family: $font-century;

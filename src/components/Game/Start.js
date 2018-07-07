@@ -1,9 +1,14 @@
 import React from 'react'
 import styles from './Game.scss'
+import { handleInitialData } from '../../actions/shared'
+import { connect } from 'react-redux'
 
 class Start extends React.Component {
 	constructor(props) {
 		super(props)
+	}
+	componentDidMount() {
+		this.props.dispatch(handleInitialData())
 	}
 
 	render() {
@@ -26,7 +31,9 @@ class Start extends React.Component {
 		)
 
 		return (
-			<div>
+			<div >
+				<div style={this.props.loading 
+					? { display: 'block' } : { display: 'none' }} className={styles.loading}></div>
 				<h1>{greeting}</h1>
 				{this.props.lowestTime != '0:00' && Time}
 				<p>Choose your level:</p>
@@ -36,4 +43,11 @@ class Start extends React.Component {
 	}
 }
 
-export default Start
+function mapStateToProps({ data }) {
+
+	return {
+		loading: data === null
+	}  
+}
+
+export default connect(mapStateToProps)(Start)

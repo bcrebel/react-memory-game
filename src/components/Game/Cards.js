@@ -6,6 +6,7 @@ import FlipMove from 'react-flip-move'
 import Card from './Card'
 import ProgressBar from './ProgressBar'
 import Bullseye from './Bullseye'
+import { handleInitialData } from '../../actions/shared'
 
 let lodashShuffle = require('lodash.shuffle')
 
@@ -195,6 +196,7 @@ class CardContainer extends React.Component {
 	}
 
 	render() { 
+		console.log(this.state)
 		const formatTime = time => {
 			if (time < 0) return '--:--'
 			const h = Math.floor(time / 3600)
@@ -246,7 +248,5 @@ class CardContainer extends React.Component {
 		)
 	}
 }
-
-
 
 export default CardContainer
