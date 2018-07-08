@@ -1,4 +1,5 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import styles from './Game.scss'
 import { levels } from './Levels'
 import Start from './Start'
@@ -6,8 +7,7 @@ import FlipMove from 'react-flip-move'
 import Card from './Card'
 import ProgressBar from './ProgressBar'
 import Bullseye from './Bullseye'
-import { handleInitialData } from '../../actions/shared'
-
+import { setLevel } from '../../actions/level'
 let lodashShuffle = require('lodash.shuffle')
 
 
@@ -20,8 +20,8 @@ class CardContainer extends React.Component {
 			latestTime: 0,
 			lowestTime: {'easy': '', 'hard': '', 'crazy': ''},
 			level: 'easy',
-			matchNumber: '',
-			shuffleDuration: '15',
+			matchNumber: '', // Keep in component state
+			shuffleDuration: '15', // Keep in component state
 			cards: [],
 			matches: [],
 			queue: [],
@@ -147,6 +147,8 @@ class CardContainer extends React.Component {
 	}
 
 	formatBoard(difficulty) {
+		this.props.dispatch(setLevel(difficulty))
+		
 		let symbols
 
 		if(difficulty === 'easy') {
@@ -196,7 +198,6 @@ class CardContainer extends React.Component {
 	}
 
 	render() { 
-		console.log(this.state)
 		const formatTime = time => {
 			if (time < 0) return '--:--'
 			const h = Math.floor(time / 3600)
@@ -249,4 +250,9 @@ class CardContainer extends React.Component {
 	}
 }
 
-export default CardContainer
+function mapStateToProps() {
+	 return {
+
+	 }
+}
+export default connect(mapStateToProps)(CardContainer)

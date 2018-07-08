@@ -115,41 +115,6 @@ module.exports = require("redux");
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (immutable) */ __webpack_exports__["a"] = handleInitialData;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__data__ = __webpack_require__(5);
-
-
-function getLevels(url) {
-	return fetch(url).then(data => {
-		return data.json();
-	});
-}
-
-function getInitialData() {
-	return Promise.all([getLevels('https://web-code-test-dot-nyt-games-prd.appspot.com/cards.json'), getLevels('https://web-code-test-dot-nyt-games-prd.appspot.com/triples.json')]).then(levels => {
-		return levels;
-	});
-}
-
-function handleInitialData() {
-	return dispatch => {
-		return getInitialData().then(levels => {
-			levels = {
-				easy: levels[0].levels[0].cards,
-				hard: levels[0].levels[1].cards,
-				crazy: levels[1].cards
-			};
-
-			dispatch(__WEBPACK_IMPORTED_MODULE_0__data__["b" /* receiveData */](levels));
-		});
-	};
-}
-
-/***/ }),
-/* 5 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
 /* harmony export (immutable) */ __webpack_exports__["b"] = receiveData;
 const RECEIVE_DATA = 'RECEIVE_DATA';
 /* harmony export (immutable) */ __webpack_exports__["a"] = RECEIVE_DATA;
@@ -159,6 +124,28 @@ function receiveData(data) {
 	return {
 		type: RECEIVE_DATA,
 		data
+	};
+}
+
+/***/ }),
+/* 5 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["b"] = setLevel;
+const SET_LEVEL = 'SET_LEVEL';
+/* harmony export (immutable) */ __webpack_exports__["a"] = SET_LEVEL;
+
+
+function setLevel(level) {
+	return (dispatch, getState) => {
+		const cards = getState().data[level];
+
+		dispatch({
+			type: SET_LEVEL,
+			level,
+			cards
+		});
 	};
 }
 
@@ -179,7 +166,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_react_dom_server__ = __webpack_require__(10);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_react_dom_server___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_react_dom_server__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_App_App__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__template__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__template__ = __webpack_require__(28);
 
 
 
@@ -188,7 +175,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-const clientAssets = __webpack_require__(27); // eslint-disable-line import/no-dynamic-require
+const clientAssets = __webpack_require__(29); // eslint-disable-line import/no-dynamic-require
 console.log(clientAssets);
 const port = parseInt(process.env.PORT || "3000", 10);
 const app = __WEBPACK_IMPORTED_MODULE_0_express___default.a();
@@ -252,8 +239,8 @@ module.exports = require("react-dom/server");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_redux___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_react_redux__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_redux__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_redux___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_redux__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__reducers__ = __webpack_require__(22);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__middleware__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__reducers__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__middleware__ = __webpack_require__(26);
 
 
 
@@ -306,16 +293,18 @@ class Game extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Game_scss__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Game_scss___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__Game_scss__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Levels__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Start__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_react_flip_move__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_react_flip_move___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_react_flip_move__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__Card__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__ProgressBar__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__Bullseye__ = __webpack_require__(20);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__actions_shared__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_redux__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_redux___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react_redux__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Game_scss__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Game_scss___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__Game_scss__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Levels__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__Start__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_react_flip_move__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_react_flip_move___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_react_flip_move__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__Card__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__ProgressBar__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__Bullseye__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__actions_level__ = __webpack_require__(5);
 
 
 
@@ -326,7 +315,7 @@ class Game extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
 
 
 
-let lodashShuffle = __webpack_require__(21);
+let lodashShuffle = __webpack_require__(22);
 
 class CardContainer extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
 	constructor(props) {
@@ -337,8 +326,8 @@ class CardContainer extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Compon
 			latestTime: 0,
 			lowestTime: { 'easy': '', 'hard': '', 'crazy': '' },
 			level: 'easy',
-			matchNumber: '',
-			shuffleDuration: '15',
+			matchNumber: '', // Keep in component state
+			shuffleDuration: '15', // Keep in component state
 			cards: [],
 			matches: [],
 			queue: []
@@ -465,6 +454,8 @@ class CardContainer extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Compon
 	}
 
 	formatBoard(difficulty) {
+		this.props.dispatch(__WEBPACK_IMPORTED_MODULE_9__actions_level__["b" /* setLevel */](difficulty));
+
 		let symbols;
 
 		if (difficulty === 'easy') {
@@ -473,7 +464,7 @@ class CardContainer extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Compon
 				matchNumber: 2
 			});
 
-			symbols = __WEBPACK_IMPORTED_MODULE_2__Levels__["a" /* levels */][0].cards;
+			symbols = __WEBPACK_IMPORTED_MODULE_3__Levels__["a" /* levels */][0].cards;
 		}
 
 		if (difficulty === 'hard') {
@@ -482,7 +473,7 @@ class CardContainer extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Compon
 				matchNumber: 2
 			});
 
-			symbols = __WEBPACK_IMPORTED_MODULE_2__Levels__["a" /* levels */][1].cards;
+			symbols = __WEBPACK_IMPORTED_MODULE_3__Levels__["a" /* levels */][1].cards;
 		}
 
 		if (difficulty === 'crazy') {
@@ -491,7 +482,7 @@ class CardContainer extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Compon
 				matchNumber: 3
 			});
 
-			symbols = __WEBPACK_IMPORTED_MODULE_2__Levels__["a" /* levels */][2].cards;
+			symbols = __WEBPACK_IMPORTED_MODULE_3__Levels__["a" /* levels */][2].cards;
 		}
 
 		let cards = symbols.map((symbol, idx) => {
@@ -514,7 +505,6 @@ class CardContainer extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Compon
 	}
 
 	render() {
-		console.log(this.state);
 		const formatTime = time => {
 			if (time < 0) return '--:--';
 			const h = Math.floor(time / 3600);
@@ -528,7 +518,7 @@ class CardContainer extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Compon
 
 		const Timer = ({ time = 0 }) => __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 			'p',
-			{ className: __WEBPACK_IMPORTED_MODULE_1__Game_scss___default.a.timer },
+			{ className: __WEBPACK_IMPORTED_MODULE_2__Game_scss___default.a.timer },
 			formatTime(time)
 		);
 		let lowestTimeFormat = formatTime(this.state.lowestTime[this.state.level]);
@@ -540,43 +530,43 @@ class CardContainer extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Compon
 			{ style: { position: 'relative' } },
 			__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 				'div',
-				{ style: this.state.gameStarted ? { display: 'none' } : { display: 'block' }, className: __WEBPACK_IMPORTED_MODULE_1__Game_scss___default.a.start },
+				{ style: this.state.gameStarted ? { display: 'none' } : { display: 'block' }, className: __WEBPACK_IMPORTED_MODULE_2__Game_scss___default.a.start },
 				__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-					__WEBPACK_IMPORTED_MODULE_3__Start__["a" /* default */],
+					__WEBPACK_IMPORTED_MODULE_4__Start__["a" /* default */],
 					{ newPlayer: this.state.lowestTime[this.state.level] != '', lowestTime: lowestTimeFormat, latestTime: latestTimeFormat },
 					__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 						'p',
-						{ className: __WEBPACK_IMPORTED_MODULE_1__Game_scss___default.a.level, onClick: () => this.formatBoard('easy') },
+						{ className: __WEBPACK_IMPORTED_MODULE_2__Game_scss___default.a.level, onClick: () => this.formatBoard('easy') },
 						'Easy'
 					),
 					__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 						'p',
-						{ className: __WEBPACK_IMPORTED_MODULE_1__Game_scss___default.a.level, onClick: () => this.formatBoard('hard') },
+						{ className: __WEBPACK_IMPORTED_MODULE_2__Game_scss___default.a.level, onClick: () => this.formatBoard('hard') },
 						'Hard'
 					),
 					__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 						'p',
-						{ className: __WEBPACK_IMPORTED_MODULE_1__Game_scss___default.a.level, onClick: () => this.formatBoard('crazy') },
+						{ className: __WEBPACK_IMPORTED_MODULE_2__Game_scss___default.a.level, onClick: () => this.formatBoard('crazy') },
 						'Crazy'
 					)
 				)
 			),
 			__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 				'div',
-				{ className: __WEBPACK_IMPORTED_MODULE_1__Game_scss___default.a.intro },
+				{ className: __WEBPACK_IMPORTED_MODULE_2__Game_scss___default.a.intro },
 				__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 					'h1',
-					{ className: __WEBPACK_IMPORTED_MODULE_1__Game_scss___default.a.header },
+					{ className: __WEBPACK_IMPORTED_MODULE_2__Game_scss___default.a.header },
 					'Memory Game'
 				),
 				__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 					'p',
-					{ className: __WEBPACK_IMPORTED_MODULE_1__Game_scss___default.a.restart, onClick: this.restartGame },
+					{ className: __WEBPACK_IMPORTED_MODULE_2__Game_scss___default.a.restart, onClick: this.restartGame },
 					'\u21BB'
 				),
 				__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 					'div',
-					{ className: __WEBPACK_IMPORTED_MODULE_1__Game_scss___default.a.stats },
+					{ className: __WEBPACK_IMPORTED_MODULE_2__Game_scss___default.a.stats },
 					__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(Timer, { time: this.state.secondsElapsed }),
 					this.state.lowestTime[this.state.level] != '' && __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 						'p',
@@ -585,23 +575,23 @@ class CardContainer extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Compon
 						lowestTimeFormat
 					)
 				),
-				__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_6__ProgressBar__["a" /* default */], { className: __WEBPACK_IMPORTED_MODULE_1__Game_scss___default.a[progressClass] })
+				__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_7__ProgressBar__["a" /* default */], { className: __WEBPACK_IMPORTED_MODULE_2__Game_scss___default.a[progressClass] })
 			),
 			__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-				__WEBPACK_IMPORTED_MODULE_4_react_flip_move___default.a,
-				{ typeName: 'ul', className: __WEBPACK_IMPORTED_MODULE_1__Game_scss___default.a[this.state.level] },
+				__WEBPACK_IMPORTED_MODULE_5_react_flip_move___default.a,
+				{ typeName: 'ul', className: __WEBPACK_IMPORTED_MODULE_2__Game_scss___default.a[this.state.level] },
 				this.state.cards.map((card, idx) => {
 					return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-						__WEBPACK_IMPORTED_MODULE_5__Card__["a" /* default */],
-						{ key: card.key, type: card.type, onClick: () => this.clickEvent(card.key, card.type), className: __WEBPACK_IMPORTED_MODULE_1__Game_scss___default.a[card.position] },
+						__WEBPACK_IMPORTED_MODULE_6__Card__["a" /* default */],
+						{ key: card.key, type: card.type, onClick: () => this.clickEvent(card.key, card.type), className: __WEBPACK_IMPORTED_MODULE_2__Game_scss___default.a[card.position] },
 						__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 							'div',
 							null,
-							__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_7__Bullseye__["a" /* default */], null),
-							__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('figure', { className: __WEBPACK_IMPORTED_MODULE_1__Game_scss___default.a.front }),
+							__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_8__Bullseye__["a" /* default */], null),
+							__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('figure', { className: __WEBPACK_IMPORTED_MODULE_2__Game_scss___default.a.front }),
 							__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 								'figure',
-								{ className: __WEBPACK_IMPORTED_MODULE_1__Game_scss___default.a.back },
+								{ className: __WEBPACK_IMPORTED_MODULE_2__Game_scss___default.a.back },
 								card.type
 							)
 						)
@@ -612,7 +602,10 @@ class CardContainer extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Compon
 	}
 }
 
-/* harmony default export */ __webpack_exports__["a"] = (CardContainer);
+function mapStateToProps() {
+	return {};
+}
+/* harmony default export */ __webpack_exports__["a"] = (__WEBPACK_IMPORTED_MODULE_1_react_redux__["connect"](mapStateToProps)(CardContainer));
 
 /***/ }),
 /* 14 */
@@ -641,7 +634,7 @@ const levels = [{
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Game_scss__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Game_scss___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__Game_scss__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__actions_shared__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__actions_shared__ = __webpack_require__(16);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_react_redux__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_react_redux___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_react_redux__);
 
@@ -725,18 +718,53 @@ function mapStateToProps({ data }) {
 
 /***/ }),
 /* 16 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = handleInitialData;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__data__ = __webpack_require__(4);
+
+
+function getLevels(url) {
+	return fetch(url).then(data => {
+		return data.json();
+	});
+}
+
+function getInitialData() {
+	return Promise.all([getLevels('https://web-code-test-dot-nyt-games-prd.appspot.com/cards.json'), getLevels('https://web-code-test-dot-nyt-games-prd.appspot.com/triples.json')]).then(levels => {
+		return levels;
+	});
+}
+
+function handleInitialData() {
+	return dispatch => {
+		return getInitialData().then(levels => {
+			levels = {
+				easy: levels[0].levels[0].cards,
+				hard: levels[0].levels[1].cards,
+				crazy: levels[1].cards
+			};
+
+			dispatch(__WEBPACK_IMPORTED_MODULE_0__data__["b" /* receiveData */](levels));
+		});
+	};
+}
+
+/***/ }),
+/* 17 */
 /***/ (function(module, exports) {
 
 module.exports = require("react-flip-move");
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_prop_types__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_prop_types__ = __webpack_require__(19);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_prop_types___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_prop_types__);
 
 
@@ -766,13 +794,13 @@ Card.propTypes = {
 /* harmony default export */ __webpack_exports__["a"] = (Card);
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports) {
 
 module.exports = require("prop-types");
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -794,7 +822,7 @@ const ProgressBar = props => {
 /* harmony default export */ __webpack_exports__["a"] = (ProgressBar);
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -814,33 +842,36 @@ const Bullseye = props => {
 /* harmony default export */ __webpack_exports__["a"] = (Bullseye);
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports) {
 
 module.exports = require("lodash.shuffle");
-
-/***/ }),
-/* 22 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_redux__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_redux___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_redux__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__data__ = __webpack_require__(23);
-
-
-
-/* harmony default export */ __webpack_exports__["a"] = (__WEBPACK_IMPORTED_MODULE_0_redux__["combineReducers"]({
-	data: __WEBPACK_IMPORTED_MODULE_1__data__["a" /* default */]
-}));
 
 /***/ }),
 /* 23 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_redux__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_redux___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_redux__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__data__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__level__ = __webpack_require__(25);
+
+
+
+
+/* harmony default export */ __webpack_exports__["a"] = (__WEBPACK_IMPORTED_MODULE_0_redux__["combineReducers"]({
+	data: __WEBPACK_IMPORTED_MODULE_1__data__["a" /* default */],
+	level: __WEBPACK_IMPORTED_MODULE_2__level__["a" /* default */]
+}));
+
+/***/ }),
+/* 24 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = data;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__actions_data__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__actions_data__ = __webpack_require__(4);
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 
@@ -858,11 +889,33 @@ function data(state = null, action) {
 }
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_redux_thunk__ = __webpack_require__(25);
+/* harmony export (immutable) */ __webpack_exports__["a"] = level;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__actions_level__ = __webpack_require__(5);
+
+
+function level(state = {}, action) {
+
+	switch (action.type) {
+		case __WEBPACK_IMPORTED_MODULE_0__actions_level__["a" /* SET_LEVEL */]:
+			return {
+				[action.level]: action.cards
+			};
+
+		default:
+			return state;
+	}
+}
+
+/***/ }),
+/* 26 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_redux_thunk__ = __webpack_require__(27);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_redux_thunk___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_redux_thunk__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_redux__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_redux___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_redux__);
@@ -874,13 +927,13 @@ const composeEnhancers = typeof window !== 'undefined' && window.__REDUX_DEVTOOL
 /* harmony default export */ __webpack_exports__["a"] = (composeEnhancers(__WEBPACK_IMPORTED_MODULE_1_redux__["applyMiddleware"](__WEBPACK_IMPORTED_MODULE_0_redux_thunk___default.a)));
 
 /***/ }),
-/* 25 */
+/* 27 */
 /***/ (function(module, exports) {
 
 module.exports = require("redux-thunk");
 
 /***/ }),
-/* 26 */
+/* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -910,7 +963,7 @@ const getDeferScript = src => src ? `<script defer src="${src}"></script>` : '';
 </html>`);
 
 /***/ }),
-/* 27 */
+/* 29 */
 /***/ (function(module, exports) {
 
 module.exports = {"main.js":"http://localhost:3001/main.js"}
