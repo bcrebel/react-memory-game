@@ -8,6 +8,8 @@ import Card from './Card'
 import ProgressBar from './ProgressBar'
 import Bullseye from './Bullseye'
 import { setLevel } from '../../actions/level'
+import { startGame } from '../../actions/game'
+
 let lodashShuffle = require('lodash.shuffle')
 
 
@@ -148,7 +150,7 @@ class CardContainer extends React.Component {
 
 	formatBoard(difficulty) {
 		this.props.dispatch(setLevel(difficulty))
-		
+		this.props.dispatch(startGame())
 		let symbols
 
 		if(difficulty === 'easy') {

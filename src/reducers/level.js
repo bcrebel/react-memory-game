@@ -5,7 +5,8 @@ export default function level(state = {}, action) {
 	switch(action.type) {
 		case SET_LEVEL:
 			return {
-				[action.level]: action.cards
+				difficulty: action.level,
+				matchNumber: action.level === 'crazy' ? 3 : 2
 			}
 
 		default: 
