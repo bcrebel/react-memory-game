@@ -6,5 +6,5 @@ import game from './game'
 export default combineReducers({
 	data,
 	level,
-	game,
+	game
 })

@@ -9,6 +9,7 @@ import ProgressBar from './ProgressBar'
 import Bullseye from './Bullseye'
 import { setLevel } from '../../actions/level'
 import { startGame } from '../../actions/game'
+import { handleFlip } from '../../actions/game'
 
 let lodashShuffle = require('lodash.shuffle')
 
@@ -22,8 +23,8 @@ class CardContainer extends React.Component {
 			latestTime: 0,
 			lowestTime: {'easy': '', 'hard': '', 'crazy': ''},
 			level: 'easy',
-			matchNumber: '', // Keep in component state
-			shuffleDuration: '15', // Keep in component state
+			matchNumber: '', 
+			shuffleDuration: '15', // Keep in component state?
 			cards: [],
 			matches: [],
 			queue: [],
@@ -47,7 +48,7 @@ class CardContainer extends React.Component {
 		this.setState((prevState) => {
 			cards: prevState.cards.map((card) => {
 				ids.forEach((id) => {
-					if(card.key.toString() === id) {
+					if(card.id.toString() === id) {
 						card.position = null
 					}
 				})
@@ -76,6 +77,8 @@ class CardContainer extends React.Component {
 	}
 
 	clickEvent(id, type) {
+
+		this.props.dispatch(handleFlip(id, type))
 		let obj = {}
 		obj[id] = type
 		
@@ -83,7 +86,7 @@ class CardContainer extends React.Component {
 
 		this.setState((prevState) => {
 			cards: prevState.cards.map((card) => {
-				if(card.key === id) {
+				if(card.id === id) {
 					card.position = 'flipped'
 				}
 
@@ -184,7 +187,7 @@ class CardContainer extends React.Component {
 			return {
 				type: symbol,
 				position: null,
-				key: idx
+				id: idx
 			}
 		})
 
@@ -238,7 +241,7 @@ class CardContainer extends React.Component {
 				</div>
 				<FlipMove typeName='ul' className={styles[this.state.level]}>
 					{this.state.cards.map((card, idx) => {
-						return <Card key={card.key} type={card.type} onClick={() => this.clickEvent(card.key, card.type)} className={styles[card.position]}>
+						return <Card key={card.id} type={card.type} onClick={() => this.clickEvent(card.id, card.type)} className={styles[card.position]}>
 							<div>
 								<Bullseye />
 								<figure className={styles.front}></figure>

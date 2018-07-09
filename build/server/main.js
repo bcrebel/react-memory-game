@@ -67,12 +67,154 @@ module.exports =
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["j"] = startGame;
+/* harmony export (immutable) */ __webpack_exports__["i"] = handleFlip;
+const START_GAME = 'START_GAME';
+/* harmony export (immutable) */ __webpack_exports__["g"] = START_GAME;
+
+const TIMER_TICK = 'TIMER_TICK';
+/* harmony export (immutable) */ __webpack_exports__["h"] = TIMER_TICK;
+
+const FLIP_CARD = 'FLIP_CARD';
+/* harmony export (immutable) */ __webpack_exports__["d"] = FLIP_CARD;
+
+const QUEUE_CARD = 'QUEUE_CARD';
+/* harmony export (immutable) */ __webpack_exports__["e"] = QUEUE_CARD;
+
+const ADD_RECORD = 'ADD_RECORD';
+/* harmony export (immutable) */ __webpack_exports__["b"] = ADD_RECORD;
+
+const RESTART_GAME = 'RESTART_GAME';
+/* harmony export (immutable) */ __webpack_exports__["f"] = RESTART_GAME;
+
+const ADD_MATCH = 'ADD_MATCH';
+/* harmony export (immutable) */ __webpack_exports__["a"] = ADD_MATCH;
+
+const EMPTY_QUEUE = 'EMPTY_QUEUE';
+/* harmony export (immutable) */ __webpack_exports__["c"] = EMPTY_QUEUE;
+
+
+function restartGame() {
+	return {
+		type: RESTART_GAME,
+		gameStarted: false
+	};
+}
+
+function startGame() {
+	return (dispatch, getState) => {
+
+		clearInterval(timer);
+		let timer = setInterval(() => dispatch({ type: TIMER_TICK }), 1000);
+
+		let set = getState().data[getState().level.difficulty].map((symbol, idx) => {
+			return {
+				type: symbol,
+				position: null,
+				key: idx
+			};
+		});
+
+		dispatch({
+			type: START_GAME,
+			cards: set,
+			newRecord: false
+		});
+	};
+}
+
+function handleFlip(id, type) {
+
+	return (dispatch, getState) => {
+		let priorQueue = getState().game.queue;
+		let queue = () => getState().game.queue;
+		let queueLength = () => getState().game.queue.length;
+		let matchLength = getState().game.matches.length;
+		let matchNumber = getState().level.matchNumber;
+		let deckLength = getState().game.cards.length;
+		let currCard = { [id]: type };
+		let level = getState().level.difficulty;
+		let lowestTime = () => getState().game.lowestTime[level];
+		let secondsElapsed = () => getState().game.secondsElapsed;
+
+		let positionCards = getState().game.cards.map(card => {
+			return card.key === id ? Object.assign(card, { position: 'flipped' }) : card;
+		});
+
+		dispatch({
+			type: FLIP_CARD,
+			cards: positionCards
+		});
+
+		if (queueLength() === 0) {
+			dispatch({
+				type: QUEUE_CARD,
+				card: currCard
+			});
+		}
+
+		if (priorQueue.length > 0) {
+			// Compare current symbol with last symbol in queue
+			if (Object.values(queue()[queueLength() - 1])[0] === type) {
+				// If queue has not reached matchNumber - 1
+				if (queueLength() < matchNumber - 1) {
+
+					dispatch({
+						type: QUEUE_CARD,
+						card: currCard
+					});
+				} else if (queueLength() === matchNumber - 1) {
+					// Check if winning selection
+
+					if (matchLength === deckLength - matchNumber) {
+						// Game is won
+						if (lowestTime() != '') {
+							if (secondsElapsed() < lowestTime()) {
+								dispatch({
+									type: 'ADD_RECORD',
+									record: { [level]: secondsElapsed },
+									newRecord: true
+								});
+							}
+						} else {
+							dispatch({
+								type: 'ADD_RECORD',
+								record: { [level]: secondsElapsed() },
+								newRecord: true
+							});
+						}
+
+						setTimeout(restartGame(), 2000);
+					} else {
+						// a match short of winning
+						dispatch({
+							type: ADD_MATCH,
+							cards: priorQueue.concat(currCard),
+							queue: []
+						});
+					}
+				}
+			} else {
+				dispatch({
+					type: EMPTY_QUEUE,
+					queue: []
+				});
+			}
+		}
+	};
+}
+
+/***/ }),
+/* 1 */
 /***/ (function(module, exports) {
 
 module.exports = require("react");
 
 /***/ }),
-/* 1 */
+/* 2 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -99,44 +241,10 @@ module.exports = {
 };
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports) {
 
 module.exports = require("react-redux");
-
-/***/ }),
-/* 3 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (immutable) */ __webpack_exports__["c"] = startGame;
-const START_GAME = 'START_GAME';
-/* harmony export (immutable) */ __webpack_exports__["a"] = START_GAME;
-
-const TIMER_TICK = 'TIMER_TICK';
-/* harmony export (immutable) */ __webpack_exports__["b"] = TIMER_TICK;
-
-
-function startGame() {
-	return (dispatch, getState) => {
-
-		clearInterval(timer);
-		let timer = setInterval(() => dispatch({ type: TIMER_TICK }), 1000);
-
-		const cards = getState().data[getState().level.difficulty].map((symbol, idx) => {
-			return {
-				type: symbol,
-				position: null,
-				key: idx
-			};
-		});
-
-		dispatch({
-			type: START_GAME,
-			cards
-		});
-	};
-}
 
 /***/ }),
 /* 4 */
@@ -195,7 +303,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_compression___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_compression__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_path__ = __webpack_require__(10);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_path___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_path__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_react__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_react_dom_server__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_react_dom_server___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_react_dom_server__);
@@ -266,10 +374,10 @@ module.exports = require("react-dom/server");
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Game_Game__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_redux__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_redux__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_redux___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_react_redux__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_redux__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_redux___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_redux__);
@@ -298,9 +406,9 @@ const App = () => __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Game_scss__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Game_scss__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Game_scss___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__Game_scss__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Cards__ = __webpack_require__(14);
 
@@ -325,11 +433,11 @@ class Game extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_redux__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_redux__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_redux___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react_redux__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Game_scss__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Game_scss__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Game_scss___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__Game_scss__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Levels__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__Start__ = __webpack_require__(16);
@@ -339,7 +447,8 @@ class Game extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Component {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__ProgressBar__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__Bullseye__ = __webpack_require__(22);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__actions_level__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__actions_game__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__actions_game__ = __webpack_require__(0);
+
 
 
 
@@ -363,8 +472,8 @@ class CardContainer extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Compon
 			latestTime: 0,
 			lowestTime: { 'easy': '', 'hard': '', 'crazy': '' },
 			level: 'easy',
-			matchNumber: '', // Keep in component state
-			shuffleDuration: '15', // Keep in component state
+			matchNumber: '',
+			shuffleDuration: '15', // Keep in component state?
 			cards: [],
 			matches: [],
 			queue: []
@@ -388,7 +497,7 @@ class CardContainer extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Compon
 		this.setState(prevState => {
 			cards: prevState.cards.map(card => {
 				ids.forEach(id => {
-					if (card.key.toString() === id) {
+					if (card.id.toString() === id) {
 						card.position = null;
 					}
 				});
@@ -417,6 +526,8 @@ class CardContainer extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Compon
 	}
 
 	clickEvent(id, type) {
+
+		this.props.dispatch(__WEBPACK_IMPORTED_MODULE_10__actions_game__["i" /* handleFlip */](id, type));
 		let obj = {};
 		obj[id] = type;
 
@@ -424,7 +535,7 @@ class CardContainer extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Compon
 
 		this.setState(prevState => {
 			cards: prevState.cards.map(card => {
-				if (card.key === id) {
+				if (card.id === id) {
 					card.position = 'flipped';
 				}
 
@@ -492,7 +603,7 @@ class CardContainer extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Compon
 
 	formatBoard(difficulty) {
 		this.props.dispatch(__WEBPACK_IMPORTED_MODULE_9__actions_level__["b" /* setLevel */](difficulty));
-		this.props.dispatch(__WEBPACK_IMPORTED_MODULE_10__actions_game__["c" /* startGame */]());
+		this.props.dispatch(__WEBPACK_IMPORTED_MODULE_10__actions_game__["j" /* startGame */]());
 		let symbols;
 
 		if (difficulty === 'easy') {
@@ -526,7 +637,7 @@ class CardContainer extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Compon
 			return {
 				type: symbol,
 				position: null,
-				key: idx
+				id: idx
 			};
 		});
 
@@ -620,7 +731,7 @@ class CardContainer extends __WEBPACK_IMPORTED_MODULE_0_react___default.a.Compon
 				this.state.cards.map((card, idx) => {
 					return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 						__WEBPACK_IMPORTED_MODULE_6__Card__["a" /* default */],
-						{ key: card.key, type: card.type, onClick: () => this.clickEvent(card.key, card.type), className: __WEBPACK_IMPORTED_MODULE_2__Game_scss___default.a[card.position] },
+						{ key: card.id, type: card.type, onClick: () => this.clickEvent(card.id, card.type), className: __WEBPACK_IMPORTED_MODULE_2__Game_scss___default.a[card.position] },
 						__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 							'div',
 							null,
@@ -667,12 +778,12 @@ const levels = [{
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Game_scss__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Game_scss__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Game_scss___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__Game_scss__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__actions_shared__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_react_redux__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_react_redux__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_react_redux___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_react_redux__);
 
 
@@ -799,7 +910,7 @@ module.exports = require("react-flip-move");
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_prop_types__ = __webpack_require__(20);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_prop_types___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_prop_types__);
@@ -841,9 +952,9 @@ module.exports = require("prop-types");
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Game_scss__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Game_scss__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Game_scss___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__Game_scss__);
 
 
@@ -863,7 +974,7 @@ const ProgressBar = props => {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 
 
@@ -957,28 +1068,74 @@ function level(state = {}, action) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = game;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__actions_game__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__actions_game__ = __webpack_require__(0);
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 
 
 
-function game(state = { started: false }, action) {
+
+
+
+
+
+
+const initialState = {
+	started: false,
+	lowestTime: { 'easy': '', 'hard': '', 'crazy': '' }
+};
+
+function game(state = initialState, action) {
 	switch (action.type) {
 
-		case __WEBPACK_IMPORTED_MODULE_0__actions_game__["a" /* START_GAME */]:
-			return {
+		case __WEBPACK_IMPORTED_MODULE_0__actions_game__["g" /* START_GAME */]:
+			return _extends({}, state, {
 				started: true,
 				cards: action.cards,
 				queue: [],
 				matches: [],
-				secondsElapsed: 0
-			};
+				secondsElapsed: 0,
+				newRecord: false
+			});
 
-		case __WEBPACK_IMPORTED_MODULE_0__actions_game__["b" /* TIMER_TICK */]:
+		case __WEBPACK_IMPORTED_MODULE_0__actions_game__["h" /* TIMER_TICK */]:
 			return _extends({}, state, {
 				secondsElapsed: state.secondsElapsed + 1
 			});
+
+		case __WEBPACK_IMPORTED_MODULE_0__actions_game__["d" /* FLIP_CARD */]:
+			return _extends({}, state, {
+				cards: action.cards
+			});
+
+		case __WEBPACK_IMPORTED_MODULE_0__actions_game__["e" /* QUEUE_CARD */]:
+			return _extends({}, state, {
+				queue: state.queue.concat(action.card)
+			});
+
+		case __WEBPACK_IMPORTED_MODULE_0__actions_game__["c" /* EMPTY_QUEUE */]:
+			return _extends({}, state, {
+				queue: action.queue
+			});
+
+		case __WEBPACK_IMPORTED_MODULE_0__actions_game__["a" /* ADD_MATCH */]:
+			return _extends({}, state, {
+				matches: state.matches.concat(action.cards),
+				queue: action.queue
+			});
+
+		case __WEBPACK_IMPORTED_MODULE_0__actions_game__["b" /* ADD_RECORD */]:
+
+			return _extends({}, state, {
+				lowestTime: _extends({}, state.lowestTime, action.record),
+				newRecord: action.newRecord
+			});
+
+		case __WEBPACK_IMPORTED_MODULE_0__actions_game__["f" /* RESTART_GAME */]:
+
+			return {
+				gameStarted: action.gameStarted
+			};
 
 		default:
 			return state;
